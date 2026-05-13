@@ -15,7 +15,8 @@ COPY . .
 
 FROM base AS dev
 
-RUN uv sync --frozen --system
+RUN uv export --frozen --all-groups --no-hashes -o /tmp/requirements-dev.txt && \
+    uv pip install --system --no-cache -r /tmp/requirements-dev.txt
 
 RUN sed -i 's/\r//' entrypoint.sh && chmod +x entrypoint.sh
 
@@ -35,7 +36,8 @@ ENTRYPOINT ["./entrypoint.sh"]
 
 FROM base AS test
 
-RUN uv sync --frozen --system
+RUN uv export --frozen --all-groups --no-hashes -o /tmp/requirements-dev.txt && \
+    uv pip install --system --no-cache -r /tmp/requirements-dev.txt
 
 RUN printf '#!/bin/sh\nset -e\npytest -v\n' > /usr/local/bin/run-tests \
     && chmod +x /usr/local/bin/run-tests

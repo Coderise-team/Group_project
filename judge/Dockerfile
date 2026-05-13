@@ -20,7 +20,7 @@ CMD ["uvicorn", "judge_app.main:app", "--host", "0.0.0.0", "--port", "8001"]
 
 FROM base AS test
 
-RUN uv sync --frozen --system
+RUN UV_SYSTEM_PYTHON=1 uv sync --frozen
 
 RUN printf '#!/bin/sh\nset -e\npytest -v\n' > /usr/local/bin/run-tests \
     && chmod +x /usr/local/bin/run-tests
