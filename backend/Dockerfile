@@ -13,6 +13,17 @@ RUN uv pip install --system --no-cache .
 COPY . .
 
 
+FROM base AS dev
+
+RUN uv sync --frozen --system
+
+RUN sed -i 's/\r//' entrypoint.sh && chmod +x entrypoint.sh
+
+EXPOSE 8000
+
+ENTRYPOINT ["./entrypoint.sh"]
+
+
 FROM base AS web
 
 RUN sed -i 's/\r//' entrypoint.sh && chmod +x entrypoint.sh
