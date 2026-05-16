@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "apps.contests",
     "apps.submissions",
     "apps.realtime",
+    "rest_framework_simplejwt",
 ]
 
 MIDDLEWARE = [
