@@ -1,9 +1,12 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from apps.users.views import RegisterView
+from .views import RegisterView, AvatarUploadView
+
+app_name = "users"
 
 urlpatterns = [
-    path('api/auth/register/', RegisterView.as_view()),
-    path('api/auth/login/', TokenObtainPairView.as_view()),
-    path('api/auth/token/refresh/', TokenRefreshView.as_view()),
+    path('register/', RegisterView.as_view()),
+    path('login/', TokenObtainPairView.as_view()),
+    path('token/refresh/', TokenRefreshView.as_view()),
+    path('avatar/', AvatarUploadView.as_view(), name="avatar-upload"),
 ]
