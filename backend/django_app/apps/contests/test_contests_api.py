@@ -1,13 +1,12 @@
-import pytest
-from django.urls import reverse
-from django.utils import timezone
 from datetime import timedelta
-from rest_framework import status
-from rest_framework.test import APIClient
 
+import pytest
 from apps.contests.models import Contest
 from apps.contests.tasks import update_contest_statuses
-
+from django.urls import reverse
+from django.utils import timezone
+from rest_framework import status
+from rest_framework.test import APIClient
 
 # ---------------------------------------------------------------------------
 # Helpers

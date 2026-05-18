@@ -1,14 +1,11 @@
 import logging
 
-from django.utils import timezone
-
 from celery import shared_task
-
 from django.conf import settings
+from django.utils import timezone
 from redis import Redis
 
 from .models import Contest
-
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +66,8 @@ def update_contest_statuses() -> dict:
             "active": active_updated,
             "pending": pending_updated,
         },
-        # Net change in totals since the previous run (includes contests created/edited elsewhere).
+        # Net change in totals since the previous run
+        # (includes contests created/edited elsewhere).
         "delta_since_last_run": delta,
         "total_current": total_current,
     }

@@ -1,6 +1,5 @@
-from rest_framework import serializers
-
 from apps.problems.models import Problem
+from rest_framework import serializers
 
 from .models import Contest
 
