@@ -5,31 +5,64 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('problems', '0001_initial'),
+        ("problems", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Contest',
+            name="Contest",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('start_time', models.DateTimeField()),
-                ('end_time', models.DateTimeField()),
-                ('status', models.CharField(choices=[('pending', 'Pending'), ('active', 'Active'), ('finished', 'Finished')], default='pending', max_length=10)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('participants', models.ManyToManyField(blank=True, related_name='contests', to=settings.AUTH_USER_MODEL)),
-                ('problems', models.ManyToManyField(blank=True, related_name='contests', to='problems.problem')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("start_time", models.DateTimeField()),
+                ("end_time", models.DateTimeField()),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "Pending"),
+                            ("active", "Active"),
+                            ("finished", "Finished"),
+                        ],
+                        default="pending",
+                        max_length=10,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "participants",
+                    models.ManyToManyField(
+                        blank=True, related_name="contests", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
+                (
+                    "problems",
+                    models.ManyToManyField(
+                        blank=True, related_name="contests", to="problems.problem"
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-start_time'],
-                'constraints': [models.CheckConstraint(condition=models.Q(('end_time__gt', models.F('start_time'))), name='check_start_before_end')],
+                "ordering": ["-start_time"],
+                "constraints": [
+                    models.CheckConstraint(
+                        condition=models.Q(("end_time__gt", models.F("start_time"))),
+                        name="check_start_before_end",
+                    )
+                ],
             },
         ),
     ]

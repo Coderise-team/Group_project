@@ -13,6 +13,7 @@ from apps.contests.tasks import update_contest_statuses
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def make_contest(db, title="Test Contest", status_offset_hours=1, duration_hours=2):
     """Creates a contest that starts in `status_offset_hours` hours."""
     now = timezone.now()
@@ -48,6 +49,7 @@ def make_finished_contest(db, title="Finished Contest"):
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def api_client():
@@ -95,6 +97,7 @@ def finished_contest(db):
 # List tests
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.django_db
 class TestContestList:
     def test_list_returns_200(self, api_client, contest):
@@ -117,6 +120,7 @@ class TestContestList:
 # ---------------------------------------------------------------------------
 # Create tests
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.django_db
 class TestContestCreate:
@@ -159,6 +163,7 @@ class TestContestCreate:
 # Join tests
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.django_db
 class TestContestJoin:
     def test_user_can_join_pending_contest(self, auth_client, contest, user):
@@ -196,6 +201,7 @@ class TestContestJoin:
 # Leave tests
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.django_db
 class TestContestLeave:
     def test_user_can_leave_pending_contest(self, auth_client, contest, user):
@@ -220,6 +226,7 @@ class TestContestLeave:
 # ---------------------------------------------------------------------------
 # Status tests
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.django_db
 class TestContestStatus:

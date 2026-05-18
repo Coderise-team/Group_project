@@ -1,10 +1,18 @@
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework.response import Response
 
 from .models import Contest
-from .serializers import ContestSerializer, ContestDetailSerializer, ContestWriteSerializer
+from .serializers import (
+    ContestSerializer,
+    ContestDetailSerializer,
+    ContestWriteSerializer,
+)
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -41,6 +49,7 @@ class ContestViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         from django.db.models import Count, Exists, OuterRef
+
         queryset = super().get_queryset()
 
         # Filter by status
@@ -51,7 +60,7 @@ class ContestViewSet(viewsets.ModelViewSet):
         # Annotations to avoid N+1 queries
         queryset = queryset.annotate(
             participants_count_annotated=Count("participants", distinct=True),
-            problems_count_annotated=Count("problems", distinct=True)
+            problems_count_annotated=Count("problems", distinct=True),
         )
 
         user = self.request.user
@@ -59,8 +68,7 @@ class ContestViewSet(viewsets.ModelViewSet):
             # Check if user is in the M2M through table
             ThroughModel = Contest.participants.through
             user_joined = ThroughModel.objects.filter(
-                contest_id=OuterRef("pk"),
-                user_id=user.pk
+                contest_id=OuterRef("pk"), user_id=user.pk
             )
             queryset = queryset.annotate(is_joined_annotated=Exists(user_joined))
 

@@ -20,4 +20,4 @@ class ContestAdmin(admin.ModelAdmin):
     filter_horizontal = ("participants",)
     ordering = ("-start_time",)
     inlines = [ProblemInline]
-    exclude = ("problems",) # Exclude the main M2M field so it doesn't show twice
+    exclude = ("problems",)  # Exclude the main M2M field so it doesn't show twice

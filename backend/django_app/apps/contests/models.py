@@ -33,8 +33,8 @@ class Contest(models.Model):
         ordering = ["-start_time"]
         constraints = [
             models.CheckConstraint(
-                condition=models.Q(end_time__gt=models.F('start_time')),
-                name='check_start_before_end'
+                condition=models.Q(end_time__gt=models.F("start_time")),
+                name="check_start_before_end",
             )
         ]
 
