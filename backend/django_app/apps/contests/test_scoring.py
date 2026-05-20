@@ -350,3 +350,17 @@ def test_score_recalculated_on_ac_transition(user, problem, active_contest):
     score = ContestScore.objects.get(user=user, contest=active_contest)
     assert score.score == 100
     assert score.solved_count == 1
+
+
+@pytest.mark.django_db
+def test_contest_score_str_contains_fields(user, active_contest):
+    score = ContestScore.objects.create(
+        user=user,
+        contest=active_contest,
+        score=123,
+        penalty=45,
+        solved_count=2,
+    )
+    text = str(score)
+    assert "score=123" in text
+    assert "penalty=45" in text
