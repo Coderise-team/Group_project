@@ -1,8 +1,10 @@
 import io
 from pathlib import Path
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image, ImageOps, UnidentifiedImageError
 from rest_framework import serializers
+
 from .models import User
 
 # Avatar upload constants
