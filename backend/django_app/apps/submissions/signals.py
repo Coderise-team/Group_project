@@ -33,5 +33,3 @@ def _recalculate_contest_score_on_ac(
     previous_verdict = getattr(instance, "_previous_verdict", None)
     if previous_verdict != Submission.Verdict.AC:
         calculate_score(instance.user, instance.contest)
-
-

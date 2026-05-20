@@ -99,9 +99,8 @@ class ContestWriteSerializer(serializers.ModelSerializer):
         return attrs
 
 
-
-
 # LEADERBOARD SERIALIZER
+
 
 class LeaderboardEntrySerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)

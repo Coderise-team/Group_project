@@ -26,9 +26,8 @@ def calculate_score(user, contest: Contest) -> ContestScore:
 
     Returns the updated ContestScore instance.
     """
-    submissions = (
-        Submission.objects.filter(user=user, contest=contest)
-        .order_by("created_at")
+    submissions = Submission.objects.filter(user=user, contest=contest).order_by(
+        "created_at"
     )
 
     total_score = 0
@@ -37,11 +36,7 @@ def calculate_score(user, contest: Contest) -> ContestScore:
     last_ac_at = None
 
     # Group by problem (remove ordering to keep DISTINCT stable)
-    problem_ids = (
-        submissions.order_by()
-        .values_list("problem_id", flat=True)
-        .distinct()
-    )
+    problem_ids = submissions.order_by().values_list("problem_id", flat=True).distinct()
 
     for problem_id in problem_ids:
         problem_subs = submissions.filter(problem_id=problem_id)

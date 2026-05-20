@@ -14,6 +14,7 @@ from rest_framework.test import APIClient
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def api_client():
     return APIClient()
@@ -32,16 +33,22 @@ def user2(db, django_user_model):
 @pytest.fixture
 def problem(db):
     return Problem.objects.create(
-        title="Two Sum", description="", difficulty="easy",
-        time_limit=1000, memory_limit=256,
+        title="Two Sum",
+        description="",
+        difficulty="easy",
+        time_limit=1000,
+        memory_limit=256,
     )
 
 
 @pytest.fixture
 def problem2(db):
     return Problem.objects.create(
-        title="Reverse String", description="", difficulty="easy",
-        time_limit=1000, memory_limit=256,
+        title="Reverse String",
+        description="",
+        difficulty="easy",
+        time_limit=1000,
+        memory_limit=256,
     )
 
 
@@ -78,6 +85,7 @@ def make_submission(user, problem, contest, verdict, minutes_after_start=10):
 # ---------------------------------------------------------------------------
 # calculate_score tests
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.django_db
 class TestCalculateScore:
@@ -239,6 +247,7 @@ class TestCalculateScore:
 # Leaderboard ordering tests
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.django_db
 class TestLeaderboard:
     def test_higher_score_ranks_first(
@@ -276,6 +285,7 @@ class TestLeaderboard:
 # ---------------------------------------------------------------------------
 # Leaderboard API tests
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.django_db
 class TestLeaderboardAPI:
