@@ -61,7 +61,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
             "verdict",
             "verdict_display",
             "is_pending",
-            "execution_time",
+            "execution_time_ms",
             "memory_used",
             "created_at",
         ]
