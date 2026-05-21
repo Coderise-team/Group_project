@@ -119,6 +119,16 @@ class TestSubmissionCreate:
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data["status"] == "queue_error"
 
+
+@pytest.mark.django_db
+def test_submission_str_includes_pending_and_verdict(submission):
+    # Covers Submission.__str__ branches (Pending vs verdict code).
+    assert "Pending" in str(submission)
+
+    submission.verdict = Submission.Verdict.AC
+    submission.save(update_fields=["verdict"])
+    assert "AC" in str(submission)
+
     def test_unauthenticated_cannot_submit(self, api_client, problem):
         url = reverse("submissions-list")
         data = {"problem": problem.pk, "code": "x=1", "language": "python"}
