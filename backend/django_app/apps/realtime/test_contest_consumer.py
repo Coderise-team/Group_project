@@ -37,8 +37,34 @@ def active_contest(db):
 
 
 @pytest.fixture
+def finished_contest(db):
+    now = timezone.now()
+    contest = Contest.objects.create(
+        title="Finished Contest",
+        start_time=now - timedelta(hours=3),
+        end_time=now - timedelta(hours=1),
+        status=Contest.Status.FINISHED,
+    )
+    return contest
+
+
+@pytest.fixture
 def user(db, django_user_model):
     return django_user_model.objects.create_user(username="player1", password="pass")
+
+
+async def _assert_rejected_with_code(communicator, expected_code: int) -> None:
+    """
+    The consumer calls accept() before close(code=...) so the client receives the
+    custom close code as a proper WebSocket close frame.  That means connect()
+    returns (True, None) — the handshake succeeded — and the close message
+    arrives as the next output frame.
+    """
+    connected, _ = await communicator.connect()
+    assert connected  # accept() was called first
+    close_msg = await communicator.receive_output(timeout=1)
+    assert close_msg["type"] == "websocket.close"
+    assert close_msg.get("code") == expected_code
 
 
 @pytest.mark.asyncio
@@ -49,27 +75,21 @@ async def test_unauthenticated_user_is_rejected(active_contest):
     app = make_app()
     communicator = WebsocketCommunicator(app, f"/ws/contests/{active_contest.pk}/")
     communicator.scope["user"] = AnonymousUser()
-    connected, code = await communicator.connect()
-    assert not connected
-    assert code == 4001
+    await _assert_rejected_with_code(communicator, 4001)
 
 
 @pytest.mark.asyncio
 @pytest.mark.django_db(transaction=True)
 async def test_nonexistent_contest_is_rejected(user):
     communicator = make_communicator(user, contest_id=99999)
-    connected, code = await communicator.connect()
-    assert not connected
-    assert code == 4004
+    await _assert_rejected_with_code(communicator, 4004)
 
 
 @pytest.mark.asyncio
 @pytest.mark.django_db(transaction=True)
 async def test_non_participant_is_rejected(user, active_contest):
     communicator = make_communicator(user, active_contest.pk)
-    connected, code = await communicator.connect()
-    assert not connected
-    assert code == 4003
+    await _assert_rejected_with_code(communicator, 4003)
 
 
 @pytest.mark.asyncio
@@ -154,5 +174,26 @@ async def test_contest_ended_closes_connection(user, active_contest):
 
         response = await communicator.receive_json_from()
         assert response["type"] == "contest_ended"
+    finally:
+        await communicator.disconnect()
+
+
+@pytest.mark.asyncio
+@pytest.mark.django_db(transaction=True)
+async def test_connect_to_finished_contest_sends_ended(user, finished_contest):
+    """Connecting to an already-finished contest sends leaderboard + contest_ended."""
+    await add_participant(finished_contest, user)
+    communicator = make_communicator(user, finished_contest.pk)
+    try:
+        connected, _ = await communicator.connect()
+        assert connected
+
+        # First message: current leaderboard snapshot
+        leaderboard_msg = await communicator.receive_json_from()
+        assert leaderboard_msg["type"] == "leaderboard_update"
+
+        # Second message: contest is already over
+        ended_msg = await communicator.receive_json_from()
+        assert ended_msg["type"] == "contest_ended"
     finally:
         await communicator.disconnect()

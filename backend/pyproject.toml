@@ -36,6 +36,14 @@ DJANGO_SETTINGS_MODULE = "settings.dev"
 pythonpath = ["django_app", "../shared"]
 asyncio_mode = "auto"
 
+[tool.coverage.run]
+omit = [
+    "django_app/config/asgi.py",
+    "django_app/config/wsgi.py",
+    "django_app/manage.py",
+    "django_app/**/migrations/*.py",
+]
+
 [tool.ruff]
 line-length = 88
 

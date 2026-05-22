@@ -134,6 +134,7 @@ services:
       PYTHONPATH: /app/django_app:/shared
       DJANGO_SETTINGS_MODULE: settings.test
     volumes:
+      - ./backend:/app
       - ./shared:/shared
     env_file: .env
     depends_on:

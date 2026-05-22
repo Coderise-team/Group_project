@@ -35,4 +35,5 @@ application = ProtocolTypeRouter(
 
 if settings.DEBUG:
     from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler
+
     application = ASGIStaticFilesHandler(application)
