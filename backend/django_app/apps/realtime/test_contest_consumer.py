@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 import pytest
-from apps.contests.models import Contest
+from apps.contests.models import Contest, ContestScore
 from apps.realtime.routing import websocket_urlpatterns
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
@@ -183,14 +183,24 @@ async def test_contest_ended_closes_connection(user, active_contest):
 async def test_connect_to_finished_contest_sends_ended(user, finished_contest):
     """Connecting to an already-finished contest sends leaderboard + contest_ended."""
     await add_participant(finished_contest, user)
+    # Add a score so the leaderboard has entries — covers the rank-assignment
+    # loop inside build_leaderboard (entry.rank = rank).
+    await database_sync_to_async(ContestScore.objects.create)(
+        user=user,
+        contest=finished_contest,
+        score=100,
+        penalty=10,
+        solved_count=1,
+    )
     communicator = make_communicator(user, finished_contest.pk)
     try:
         connected, _ = await communicator.connect()
         assert connected
 
-        # First message: current leaderboard snapshot
+        # First message: current leaderboard snapshot (with entries this time)
         leaderboard_msg = await communicator.receive_json_from()
         assert leaderboard_msg["type"] == "leaderboard_update"
+        assert len(leaderboard_msg["leaderboard"]) == 1
 
         # Second message: contest is already over
         ended_msg = await communicator.receive_json_from()
