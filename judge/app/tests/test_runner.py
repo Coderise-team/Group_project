@@ -61,11 +61,22 @@ class TestRunSubmission:
 
     @patch("app.core.runner.determine_verdict")
     @patch("app.core.runner.run_in_sandbox")
-    def test_execution_time_from_last_sandbox_result(self, mock_sandbox, mock_verdict):
-        mock_sandbox.return_value = make_sandbox_result(execution_time_ms=250)
+    def test_execution_time_is_max_across_test_cases(self, mock_sandbox, mock_verdict):
+        mock_sandbox.side_effect = [
+            make_sandbox_result(execution_time_ms=100),
+            make_sandbox_result(execution_time_ms=250),
+            make_sandbox_result(execution_time_ms=80),
+        ]
         mock_verdict.return_value = VerdictEnum.AC
 
-        result = run_submission(make_request())
+        request = make_request(
+            test_cases=[
+                ProblemTestCasePayload(input="", expected_output="1"),
+                ProblemTestCasePayload(input="", expected_output="2"),
+                ProblemTestCasePayload(input="", expected_output="3"),
+            ]
+        )
+        result = run_submission(request)
 
         assert result.execution_time_ms == 250
 
