@@ -54,7 +54,7 @@ def test_login_success(client, user_data):
 @pytest.mark.django_db
 def test_register_duplicate_username(client, user_data):
     client.post("/api/auth/register/", user_data, format="json")
-    user_data["email"] = "other@mail.com"  # другой email но тот же username
+    user_data["email"] = "other@mail.com"
     response = client.post("/api/auth/register/", user_data, format="json")
     assert response.status_code == 400
 
@@ -102,6 +102,10 @@ def test_token_refresh(client, user_data):
         format="json",
     )
     refresh = login.data["refresh"]
-    response = client.post("/api/auth/token/refresh/", {"refresh": refresh}, format="json")
+    response = client.post(
+        "/api/auth/token/refresh/",
+        {"refresh": refresh},
+        format="json",
+    )
     assert response.status_code == 200
     assert "access" in response.data
