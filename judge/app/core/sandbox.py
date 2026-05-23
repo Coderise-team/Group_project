@@ -37,8 +37,14 @@ class SandboxResult:
     execution_time_ms: int
 
 
+_docker_client: docker.DockerClient | None = None
+
+
 def _get_docker_client() -> docker.DockerClient:
-    return docker.from_env()
+    global _docker_client
+    if _docker_client is None:
+        _docker_client = docker.from_env()
+    return _docker_client
 
 
 def _make_tar(filename: str, content: bytes) -> io.BytesIO:
@@ -171,7 +177,9 @@ def run_in_sandbox(
             )
 
         exec_info = client.api.exec_inspect(exec_id)
-        exit_code = exec_info.get("ExitCode") or 0
+        exit_code = exec_info.get("ExitCode")
+        if exit_code is None:
+            exit_code = -1
 
         container.reload()
         oom_killed = container.attrs["State"].get("OOMKilled", False)
