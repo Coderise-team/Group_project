@@ -7,7 +7,11 @@ import pytest
 from apps.contests.models import Contest
 from apps.problems.models import Problem
 from apps.submissions.models import Submission
-from apps.submissions.signals import _broadcast_leaderboard, _broadcast_problem_solved
+from apps.submissions.signals import (
+    _broadcast_leaderboard,
+    _broadcast_problem_solved,
+    _broadcast_submission_update,
+)
 from django.utils import timezone
 
 
@@ -60,3 +64,17 @@ def test_broadcast_problem_solved_no_channel_layer(user, problem, active_contest
     with patch("channels.layers.get_channel_layer", return_value=None):
         # Should not raise
         _broadcast_problem_solved(submission)
+
+
+@pytest.mark.django_db
+def test_broadcast_submission_update_no_channel_layer(user, problem):
+    """_broadcast_submission_update returns silently when channel layer is None."""
+    submission = Submission.objects.create(
+        user=user,
+        problem=problem,
+        code="x=1",
+        language=Submission.Language.PYTHON,
+    )
+    with patch("channels.layers.get_channel_layer", return_value=None):
+        # Should not raise
+        _broadcast_submission_update(submission)
