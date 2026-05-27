@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views import AvatarUploadView, RegisterView, LogoutView
+from .views import AvatarUploadView, LogoutView, RegisterView
 
 app_name = "users"
 
