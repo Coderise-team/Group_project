@@ -71,4 +71,3 @@ class LogoutView(APIView):
                 {"error": "Invalid token"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
