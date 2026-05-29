@@ -1,3 +1,6 @@
+from apps.contests.models import Contest
+from apps.users.services import calculate_elo
+from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -71,3 +74,12 @@ class LogoutView(APIView):
                 {"error": "Invalid token"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+def finish_contest_view(request, contest_id):
+    contest = Contest.objects.get(id=contest_id)
+    user_winner = contest.winner
+    user_loser = contest.loser
+    calculate_elo(winner=user_winner, loser=user_loser, contest=contest)
+
+    return JsonResponse({"status": "success"})
