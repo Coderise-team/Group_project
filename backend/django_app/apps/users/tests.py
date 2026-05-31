@@ -171,14 +171,14 @@ def test_logout_without_token(client):
 
 class EloRatingTestCase(TestCase):
     def setUp(self):
-        self.first_player = User.objects.create(
-            username="qwerty", password="123wehfiew123", elo_ranking=1200
+        self.user1 = User.objects.create(
+            username="qwerty", email="p1@test.com", password="123wehfiew123", elo_rating=1200
         )
-        self.second_player = User.objects.create(
-            username="asdfg", password="ioehfuihwe128343", elo_ranking=1200
+        self.user2 = User.objects.create(
+            username="asdfg", email="p2@test.com", password="ioehfuihwe128343", elo_rating=1200
         )
-        self.match = Contest.objects.create(
-            title="Match", winner=self.first_player, loser=self.second_player
+        self.contest = Contest.objects.create(
+            title="Test Match", winner=self.user1, loser=self.user2, status="pending"
         )
 
     def test_equal_players_match(self):
@@ -265,3 +265,5 @@ class EloRatingTestCase(TestCase):
         self.assertEqual(loser_history.new_rating, self.user2.elo_rating)
         self.assertEqual(loser_history.delta, self.user2.elo_rating - old_loser_rating)
         self.assertTrue(loser_history.delta < 0)
+
+        self.assertTrue(len(str(winner_history)) > 0)
